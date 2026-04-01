@@ -70,8 +70,7 @@ numbers.forEach(button => {
         if(display.textContent.length === 8 && op !== null){
             return;
         }
-
-
+        
         currentInput += button.value;
         display.textContent = currentInput;
     });
@@ -121,4 +120,12 @@ backspace.addEventListener("click", () =>{
     }
 })
 
-
+negationButton.addEventListener("click", () => {
+    if(currentInput.includes("-")) {
+        currentInput = currentInput.slice(1);
+        display.textContent = currentInput;
+    } else {
+        currentInput = "-" + currentInput;
+        display.textContent = currentInput;
+    }
+})
