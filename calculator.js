@@ -1,7 +1,8 @@
 const addFunc = (a,b) => a + b;
 const subtractFunc = (a,b) => a - b;
 const multiplyFunc = (a,b) => a * b;
-const divideFunc = (a,b) => a / b;
+const divideFunc = (a,b) => b === 0 ? "You cannot divide by 0!" : a / b;
+const moduloFunc = (a,b) => b === 0 ? "Cannot modulo by 0" : a % b;
 
 function operate(a, b, op){
     switch (op){
@@ -13,16 +14,20 @@ function operate(a, b, op){
             return multiplyFunc(a,b);
         case "/":
             return divideFunc(a,b);
+        case "%":
+            return moduloFunc(a,b);
     }
 }
 
 function calculate(){
     secondNum = Number(currentInput);
     const result = operate(firstNum, secondNum, op);
-    firstNum = null;
+
+    firstNum = result;
     secondNum = null;
     op = null;
     currentInput = result.toString();
+    justCalculated = true;
     display.textContent = currentInput;
 }
 
@@ -40,9 +45,20 @@ let secondNum = null;
 let op = null;
 let currentInput = "";
 display.textContent = "0";
+let justCalculated = false;
 
 numbers.forEach(button => {
     button.addEventListener("click", () =>{
+
+        if(justCalculated){
+            currentInput = "";
+            display.textContent = "";
+            firstNum = null;
+            secondNum = null;
+            op = null;
+            justCalculated = false;
+        }
+
         if(display.textContent === "0" && button.value !== "."){
             display.textContent = "";
         }
@@ -55,6 +71,7 @@ numbers.forEach(button => {
             return;
         }
 
+
         currentInput += button.value;
         display.textContent = currentInput;
     });
@@ -62,19 +79,29 @@ numbers.forEach(button => {
 
 operators.forEach(button => {
     button.addEventListener("click", () =>{
-    if(op !== null && secondNum === null){
-        calculate();
-    }
-
-    if(op !== null && secondNum !== null){
+    if(justCalculated){
+        op = button.value;
+        justCalculated = false;
+        currentInput = "";
         return;
     }
 
-    firstNum = Number(currentInput);
+    if(currentInput === ""){
+        op = button.value;
+        return;
+    }
+
+    if(firstNum !== null && op !== null){
+        calculate();
+    } else {
+        firstNum = Number(currentInput);
+    }
+
     op = button.value;
-    display.textContent += button.value;
     currentInput = "";
-    })
+
+    display.textContent = `${firstNum} ${op} ${currentInput}`;
+    });
 })
 
 equalButton.addEventListener("click", () => calculate());
@@ -84,7 +111,7 @@ clearButton.addEventListener("click", () => {
     firstNum = null;
     secondNum = null;
     op = null;
-    currentInput = null;
+    currentInput = "";
 })
 
 backspace.addEventListener("click", () =>{
@@ -93,3 +120,5 @@ backspace.addEventListener("click", () =>{
         display.textContent = currentInput || "0";
     }
 })
+
+
